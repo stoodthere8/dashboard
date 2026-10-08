@@ -7,6 +7,14 @@
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="light dark">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<meta name="theme-color" content="#F6F2EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17191E" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="5분">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png" id="fav">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
 <title>오늘의 5분</title>
 <style>
 :root{
@@ -32,7 +40,12 @@ h1,h2,h3{margin:0;font-weight:500}
 .mu{color:var(--mu)}
 
 .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:22px}
-.hl{display:flex;flex-direction:column;gap:2px}
+.hl{display:flex;align-items:center;gap:14px;min-width:0}
+.ht{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mk{flex:none;width:56px;height:56px;display:block}
+.mk svg{width:100%;height:100%;display:block}
+.mk .f{fill:var(--p)}
+.mk .o{fill:none;stroke:var(--p);stroke-width:7}
 .date{font:400 28px/1.3 var(--serif);letter-spacing:-.03em}
 .week{font-size:13px;color:var(--mu)}
 .hr{display:flex;align-items:center;gap:2px;margin-right:-10px}
@@ -197,15 +210,19 @@ textarea.big{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);b
 .toast[hidden]{display:none}
 .toast .acts{display:flex;gap:16px;margin-top:2px;flex-wrap:wrap}
 .toast .acts button{background:none;border:0;color:inherit;text-decoration:underline;padding:6px 0;font-size:14px}
-@media (max-width:380px){.date{font-size:24px}.act{font-size:21px}.rm .bd{display:none}}
+@media (max-width:430px){.mk{width:48px;height:48px}.hl{gap:12px}.date{font-size:25px}.stat{max-width:96px}}
+@media (max-width:380px){.mk{width:44px;height:44px}.hl{gap:10px}.date{font-size:23px}.act{font-size:21px}.rm .bd{display:none}}
 </style>
 </head>
 <body>
 <main class="wrap" id="app">
   <header class="head">
     <div class="hl">
-      <h1 class="date" id="date"></h1>
-      <div class="week" id="week"></div>
+      <span class="mk" id="mark"></span>
+      <div class="ht">
+        <h1 class="date" id="date"></h1>
+        <div class="week" id="week"></div>
+      </div>
     </div>
     <div class="hr">
       <div class="stat" id="stat" role="status" aria-live="polite"></div>
@@ -592,17 +609,72 @@ function renderHead(){
 }
 function lockIcon(){var s=document.createElement('span');s.setAttribute('aria-hidden','true');s.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="10" height="7" rx="1.8"/><path d="M5.2 7V5.2a2.8 2.8 0 0 1 5.6 0V7"/></svg>';return s}
 var CHECK='<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5l3.2 3.2L14 5.8"/></svg>';
+function ringGeom(n){
+  var R=34,chord=n>1?2*R*Math.sin(Math.PI/n):60;
+  return {R:R,r:n===1?21:Math.min(15,chord/2-2),sw:7};
+}
+function favIcon(items){
+  try{
+    var a=document.getElementById('fav');if(!a||!document.createElement('canvas').getContext)return;
+    var dark=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches;
+    var n=items.length,Z=64,k=Z/104,cv=document.createElement('canvas');cv.width=cv.height=Z;
+    var g=cv.getContext('2d'),q=ringGeom(n),sc=k*1.06;
+    items.forEach(function(it,i){
+      var an=(-90+i*360/n)*Math.PI/180;
+      var cx=Z/2+(n===1?0:q.R*Math.cos(an))*sc,cy=Z/2+(n===1?0:q.R*Math.sin(an))*sc;
+      var col=dark?(it.p.colorDark||it.p.color):it.p.color;
+      g.beginPath();
+      if(it.on){g.arc(cx,cy,q.r*sc,0,7);g.fillStyle=col;g.fill()}
+      else{var lw=q.sw*1.25*sc;g.arc(cx,cy,q.r*sc-lw/2,0,7);g.lineWidth=lw;g.strokeStyle=col;g.stroke()}
+    });
+    a.href=cv.toDataURL('image/png');
+  }catch(e){}
+}
+function drawMark(list){
+  var el=$('mark');if(!el)return;
+  var NS='http://www.w3.org/2000/svg';
+  var items=list||PALETTE.slice(0,6).map(function(c,i){return {p:{color:c[1],colorDark:c[2]},on:i<5}});
+  var n=items.length,on=0;
+  items.forEach(function(it){if(it.on)on++});
+  var label=list?(n?'이번 주 '+n+'곳 중 '+on+'곳을 만졌어요':'이번 주 목표가 있는 페르소나가 없어요'):'오늘의 5분';
+  var svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('viewBox','8 8 104 104');svg.setAttribute('role','img');svg.setAttribute('aria-label',label);
+  var tt=document.createElementNS(NS,'title');tt.textContent=label;svg.appendChild(tt);
+  if(!n){
+    var c0=document.createElementNS(NS,'circle');
+    c0.setAttribute('cx','60');c0.setAttribute('cy','60');c0.setAttribute('r','38');c0.setAttribute('class','o');c0.style.stroke='var(--line2)';
+    svg.appendChild(c0);
+  }
+  var q=ringGeom(n),R=q.R,r=q.r;
+  items.forEach(function(it,i){
+    var a=(-90+i*360/n)*Math.PI/180;
+    var cx=n===1?60:60+R*Math.cos(a),cy=n===1?60:60+R*Math.sin(a);
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',cx.toFixed(1));c.setAttribute('cy',cy.toFixed(1));
+    if(it.on){c.setAttribute('r',r.toFixed(1));c.setAttribute('class','f p')}
+    else{c.setAttribute('r',(r-q.sw/2).toFixed(1));c.setAttribute('class','o p')}
+    c.style.setProperty('--pl',it.p.color);c.style.setProperty('--pd',it.p.colorDark||it.p.color);
+    svg.appendChild(c);
+  });
+  el.textContent='';el.appendChild(svg);
+  if(n)favIcon(items);
+  else favIcon(PALETTE.slice(0,6).map(function(c,i){return {p:{color:c[1],colorDark:c[2]},on:i<5}}));
+  drawMark.last=list;
+}
+if(window.matchMedia){try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){drawMark(drawMark.last||null)})}catch(e){}}
 function renderStamps(){
-  var box=$('stamps');box.textContent='';var n=0,tot=0;
+  var box=$('stamps');box.textContent='';var n=0,tot=0,mk=[];
   plist().forEach(function(p){
     if(target(p)<=0)return;
     tot++;
     var on=personaOn(p);if(on)n++;
+    mk.push({p:p,on:on});
     var ring=h('span',{class:'ring'});
     if(on){ring.innerHTML=CHECK}
     var b=h('button',{class:'stamp'+(on?' on':''),type:'button','aria-label':p.short+(on?', 이번 주 만짐':', 이번 주 아직'),onclick:function(){S.tab=p.key;renderTabs();renderList();$('tabs').scrollIntoView({block:'nearest'})}},ring,h('span',{class:'nm'},p.short));
     pc(b,p);box.append(b);
   });
+  drawMark(mk);
   $('bal').textContent=tot===0?'주간 목표가 있는 페르소나가 없어요.':(n===0?'이번 주는 아직 아무 곳도 만지지 않았어요.':(n===tot?'이번 주 '+tot+'곳을 모두 만졌어요.':'이번 주 '+n+'곳을 만졌어요. 아직 '+(tot-n)+'곳이 남았어요.'));
 }
 function dueDays(s){return -diff(pd(s))}
@@ -1625,7 +1697,7 @@ window.addEventListener('online',function(){if(S.status==='error')flush()});
 
 /* ---------- 시작 ---------- */
 function boot(){
-  renderHead();
+  renderHead();drawMark(null);
   S.conn=loadConn();
   if(S.conn){
     var cache=S.conn.remember?cacheLoad():null;
