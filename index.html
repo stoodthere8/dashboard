@@ -782,6 +782,13 @@ function renderTabs(){
   var dc=S.data.projects.filter(function(x){return pvisible(x.persona)&&(x.status==='done'||x.status==='dropped')}).length;
   $('donel').textContent='완료·폐기 보기 ('+dc+')';
 }
+function dayNum(){var a=todayISO().split('-').map(Number);return Math.floor(Date.UTC(a[0],a[1]-1,a[2])/86400000)}
+function rotated(){
+  var v=plist(),n=v.length;
+  if(n<2)return v;
+  var k=((dayNum()%n)+n)%n;
+  return v.slice(k).concat(v.slice(0,k));
+}
 function rowFor(x){
   var p=persona(x.persona);
   if(x.sensitive&&!S.opened[x.id]){
@@ -808,7 +815,7 @@ function renderList(){
   var v=visible();updateFlt();
   if(!v.length){box.append(h('p',{class:'empty'},S.onlyStale?'밀린 항목이 없어요.':'표시할 항목이 없어요. 완료·폐기 보기를 켜 보세요.'));return}
   if(S.tab==='ALL'){
-    plist().forEach(function(p){
+    rotated().forEach(function(p){
       var g=sorted(v.filter(function(x){return x.persona===p.key}));
       if(!g.length)return;
       box.append(pc(h('div',{class:'grp'},h('span',{class:'ball'}),h('span',{class:'gn'},p.name),h('span',{class:'c'},g.length)),p));
