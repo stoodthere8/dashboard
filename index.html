@@ -67,16 +67,20 @@ h1,h2,h3{margin:0;font-weight:500}
 .stamp.sel .nm{color:var(--ink);font-weight:600}
 .bal{font-size:13px;color:var(--mu);margin:0 0 18px;min-height:20px}
 
-.hero{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 20px 18px;margin-bottom:30px}
-.hero.ug{padding:16px 18px 14px;margin-bottom:12px;border-left:4px solid var(--p)}
-.hero.ug .act{font-size:20px;margin-bottom:4px}
-.hero.ug .sub{margin-bottom:12px}
-#hero>.hero.ug:last-child{margin-bottom:30px}
-.more{display:block;margin:-2px 0 24px;min-height:36px;font-size:13px;color:var(--mu)}
-.lead{font-size:13px;color:var(--mu);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -18px 28px;padding:2px 18px 4px;scroll-padding:0 18px;overscroll-behavior-x:contain}
+.rail::-webkit-scrollbar{display:none}
+.hero{flex:0 0 88%;min-width:0;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--p,var(--line2));border-radius:18px;padding:16px 16px 14px 18px;display:flex;flex-direction:column}
+.rail.one .hero{flex-basis:100%}
+.hero .grow{flex:1}
+.lead{font-size:13px;color:var(--mu);display:flex;align-items:center;gap:8px;margin-bottom:8px;min-height:32px}
+.lead .lt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lead .lt.od{color:var(--ink);font-weight:500}
+.lead .nv{display:flex;align-items:center;gap:0;flex:none;margin:-4px -8px -4px 0;font-size:12px}
+.lead .nv button{width:32px;height:32px;border:0;background:none;color:var(--mu);border-radius:8px;font-size:16px;line-height:1}
+.lead .nv span{min-width:34px;text-align:center}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--p);flex:none}
-.act{font:400 24px/1.45 var(--serif);letter-spacing:-.03em;margin:0 0 6px;word-break:keep-all}
-.sub{font-size:14px;color:var(--mu);margin:0 0 18px;word-break:keep-all}
+.act{font:400 20px/1.45 var(--serif);letter-spacing:-.03em;margin:0 0 4px;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sub{font-size:13px;color:var(--mu);margin:0 0 12px;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .btns{display:flex;gap:10px;flex-wrap:wrap}
 .btn{min-height:44px;padding:0 18px;border-radius:10px;border:1px solid var(--line2);background:transparent}
 .btn.pri{background:var(--ink);border-color:var(--ink);color:var(--bg)}
@@ -177,6 +181,13 @@ dialog::backdrop{background:var(--scrim)}
 .qd{display:block;margin:8px 0 18px;font-size:12px;color:var(--mu)}
 .qd input{display:block;margin-top:4px;max-width:240px}
 .queue{margin-bottom:6px}
+.trow{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.trow .tt{word-break:keep-all;line-height:1.5}
+.trow .tag{display:inline-block;font-size:11px;padding:0 7px;border-radius:6px;background:var(--chip);color:var(--ink);margin-right:7px;vertical-align:1px}
+.trow .td{grid-column:1 / -1;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu)}
+.trow .td input{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:1px solid var(--line2);border-radius:8px;padding:5px 8px;min-height:34px;width:auto}
+.trow .td .od{color:var(--ink);font-weight:500}
+.trow .td button{font-size:12px}
 .lrow{display:grid;grid-template-columns:1fr;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
 .lrow .btn{justify-self:start}
 .rulegrid{display:grid;grid-template-columns:1fr 92px 92px;gap:8px 10px;align-items:center;font-size:14px;margin-bottom:16px}
@@ -728,38 +739,41 @@ function urgentList(){
   c.sort(function(m,n){return (effDue(m).days-effDue(n).days)||(score(n)-score(m))});
   return c;
 }
-function urgentCard(x){
-  var p=persona(x.persona),ed=effDue(x);
-  return pc(h('div',{class:'hero ug','data-id':x.id},
-    h('div',{class:'lead'},h('span',{class:'dot'}),'마감 '+dueText(ed.date)+' · '+p.short),
-    h('p',{class:'act'},ed.text||x.title),
-    h('p',{class:'sub'},x.title+' (마감 '+dueShort(ed.date)+(ed.src==='queue'?', 대기 중인 할 일':'')+')'),
+function heroCard(x,i,n,railGo){
+  var p=persona(x.persona),ed=effDue(x),q=(x.queue||[]).length;
+  var due=ed&&ed.days<=3;
+  var tag=ed&&ed.days<=3?'마감 '+dueText(ed.date):'이번 주 아직';
+  var act=ed?(ed.text||x.title):(x.nextAction||x.title);
+  var sub=x.title+' · '+(ed?'마감 '+dueFull(ed.date)+(ed.src==='queue'?' (대기 중)':''):CAD[x.cadence]+' · 마지막 터치 '+ago(days(x)))+(q?' · 대기 '+q+'개':'');
+  var nav=n>1?h('span',{class:'nv'},
+    h('button',{type:'button','aria-label':'이전 카드',onclick:function(){railGo(i-1)}},'‹'),
+    h('span',null,(i+1)+'/'+n),
+    h('button',{type:'button','aria-label':'다음 카드',onclick:function(){railGo(i+1)}},'›')):null;
+  return pc(h('div',{class:'hero','data-id':x.id,role:'group','aria-label':(i+1)+'/'+n},
+    h('div',{class:'lead'},h('span',{class:'dot'}),h('span',{class:'lt'+(due?' od':'')},p.short+' · '+tag),nav),
+    h('div',{class:'grow'},h('p',{class:'act'},act),h('p',{class:'sub'},sub)),
     h('div',{class:'btns'},
       h('button',{class:'btn pri sm','data-k':'ci',type:'button',onclick:function(){checkin(x)}},'체크인'),
       h('button',{class:'btn sm',type:'button',onclick:function(){openSheet(x.id)}},'자세히'))),p);
 }
 function renderHero(){
-  var box=$('hero');box.textContent='';
-  var ug=urgentList(),shown=S.ugAll?ug:ug.slice(0,3);
-  shown.forEach(function(x){box.append(urgentCard(x))});
-  if(ug.length>3)box.append(h('button',{class:'lb more',type:'button',id:'ug-more',onclick:function(){S.ugAll=!S.ugAll;renderHero()}},S.ugAll?'접기':'마감 임박 '+(ug.length-3)+'개 더 보기'));
-  var list=candidates();
-  if(!list.length&&ug.length)return;
-  if(!list.length){
-    box.append(h('div',{class:'hero'},h('p',{class:'act'},'오늘 제안할 항목이 없어요'),h('p',{class:'sub'},'이번 주 모든 페르소나를 만졌거나, 제안 조건에 맞는 활성 항목이 없어요.')));
+  var box=$('hero');
+  var old=box.firstChild&&box.firstChild.classList&&box.firstChild.classList.contains('rail')?box.firstChild.scrollLeft:0;
+  box.textContent='';
+  var ug=urgentList(),cs=candidates(),all=ug.concat(cs);
+  if(!all.length){
+    box.append(h('div',{class:'rail one'},h('div',{class:'hero'},h('p',{class:'act'},'오늘 제안할 항목이 없어요'),h('p',{class:'sub'},'이번 주 모든 페르소나를 만졌거나, 제안 조건에 맞는 활성 항목이 없어요.'))));
     return;
   }
-  var x=list[S.skip%list.length];
-  var p=persona(x.persona),q=(x.queue||[]).length,ed=effDue(x);
-  var dueTxt=ed?(ed.src==='queue'?', 대기 중인 “'+ed.text+'” 마감 '+dueFull(ed.date):', 마감 '+dueFull(ed.date)):'';
-  var btns=[h('button',{class:'btn pri',type:'button',id:'hero-ci',onclick:function(){checkin(x)}},'체크인'),
-            h('button',{class:'btn',type:'button',onclick:function(){openSheet(x.id)}},'자세히')];
-  if(list.length>1)btns.push(h('button',{class:'btn',type:'button',onclick:function(){S.skip++;renderHero()}},'다른 걸로'));
-  box.append(h('div',{class:'hero'},
-    pc(h('div',{class:'lead'},h('span',{class:'dot'}),(ed&&ed.days<=3?'마감이 다가와요 · ':'오늘 5분만 낸다면 · ')+p.short),p),
-    h('p',{class:'act'},x.nextAction||x.title),
-    h('p',{class:'sub'},x.title+' (마지막 터치 '+ago(days(x))+(q?', 대기 '+q+'개':'')+dueTxt+')'),
-    h('div',{class:'btns'},btns)));
+  var rail=h('div',{class:'rail'+(all.length===1?' one':''),role:'region','aria-label':'오늘 챙길 항목'});
+  function go(i){
+    var k=((i%all.length)+all.length)%all.length,c=rail.children[k];
+    if(c)rail.scrollTo({left:c.offsetLeft-rail.offsetLeft-18,behavior:'smooth'});
+  }
+  all.forEach(function(x,i){rail.append(heroCard(x,i,all.length,go))});
+  var first=rail.querySelector('[data-k=ci]');if(first)first.id='hero-ci';
+  box.append(rail);
+  rail.scrollLeft=old;
 }
 function scope(){
   return S.data.projects.filter(function(x){
@@ -848,28 +862,53 @@ function refLink(r){
   if(r.url&&/^https:\/\//i.test(r.url))return h('a',{href:r.url,target:'_blank',rel:'noopener noreferrer'},r.t);
   return h('span',null,r.t+' (링크 없음)');
 }
-function qEditor(x){
-  var q=(x.queue||[]).slice(),box=h('div',{class:'queue'});
-  box.append(h('p',{class:'sh-h'},q.length?'다음에 할 일 '+q.length+'개':'다음에 할 일'));
-  function save(nq){
-    if(!canEdit())return;
-    enqueue({t:'update',id:x.id,patch:{queue:nq},msg:'대기열: '+x.id,log:{ts:utc(),id:x.id,kind:'edit',note:'대기열',statusFrom:x.status,statusTo:x.status}},0);
-    openSheet(x.id);
+function taskList(x){
+  var t=[];
+  if((x.nextAction||'').trim())t.push({t:x.nextAction,due:x.nextDue||''});
+  (x.queue||[]).forEach(function(it){t.push({t:it.t,due:it.due||''})});
+  return t;
+}
+function saveTasks(x,tasks){
+  if(!canEdit())return;
+  var first=tasks[0];
+  var nq=tasks.slice(1).map(function(it){var o={t:it.t};if(it.due)o.due=it.due;return o});
+  var patch={};
+  var na=first?first.t:'',nd=first?(first.due||''):'';
+  if(na!==(x.nextAction||''))patch.nextAction=na;
+  if(nd!==(x.nextDue||''))patch.nextDue=nd;
+  if(JSON.stringify(nq)!==JSON.stringify(x.queue||[]))patch.queue=nq;
+  if(Object.keys(patch).length){
+    enqueue({t:'update',id:x.id,patch:patch,msg:'할 일: '+x.id,log:{ts:utc(),id:x.id,kind:'edit',note:'할 일 순서·마감',statusFrom:x.status,statusTo:x.status}},0);
   }
-  q.forEach(function(it,i){
+  openSheet(x.id);
+}
+function qEditor(x){
+  var tasks=taskList(x),box=h('div',{class:'queue'});
+  box.append(h('p',{class:'sh-h'},tasks.length>1?'할 일 '+tasks.length+'개 (맨 위가 지금 할 한 걸음)':'지금 할 한 걸음'));
+  if(!tasks.length)box.append(h('p',{class:'hint'},'다음 행동이 비어 있어요. 아래에서 추가해 주세요.'));
+  tasks.forEach(function(it,i){
     var acts=[];
-    if(i>0)acts.push(h('button',{class:'ib',type:'button','aria-label':'위로',onclick:function(){var n=q.slice(),t=n[i];n[i]=n[i-1];n[i-1]=t;save(n)}},'↑'));
-    if(i<q.length-1)acts.push(h('button',{class:'ib',type:'button','aria-label':'아래로',onclick:function(){var n=q.slice(),t=n[i];n[i]=n[i+1];n[i+1]=t;save(n)}},'↓'));
-    acts.push(h('button',{class:'ib',type:'button','aria-label':'지우기',onclick:function(){save(q.filter(function(_,j){return j!==i}))}},'×'));
-    box.append(h('div',{class:'qrow','data-q':i},h('span',{class:'qt'},it.t,it.due?h('span',{class:'mu'},'  ~'+dueFull(it.due)):null),h('span',{class:'qa'},acts)));
+    if(tasks.length>1){
+      if(i>0)acts.push(h('button',{class:'ib',type:'button','aria-label':'위로',onclick:function(){var n=tasks.slice(),t=n[i];n[i]=n[i-1];n[i-1]=t;saveTasks(x,n)}},'↑'));
+      if(i<tasks.length-1)acts.push(h('button',{class:'ib',type:'button','aria-label':'아래로',onclick:function(){var n=tasks.slice(),t=n[i];n[i]=n[i+1];n[i+1]=t;saveTasks(x,n)}},'↓'));
+    }
+    acts.push(h('button',{class:'ib',type:'button','aria-label':'지우기',onclick:function(){saveTasks(x,tasks.filter(function(_,j){return j!==i}))}},'×'));
+    var di=inp({type:'date','aria-label':'마감일','data-d':i});di.value=it.due||'';
+    di.addEventListener('change',function(){
+      if(di.value&&!validDate(di.value)){di.value=it.due||'';return}
+      var n=tasks.map(function(t){return {t:t.t,due:t.due}});n[i].due=di.value||'';saveTasks(x,n);
+    });
+    var td=h('div',{class:'td'},'마감',di,it.due?h('span',{class:dueDays(it.due)<=3?'od':''},dueText(it.due)):null,
+      it.due?h('button',{class:'lb',type:'button','data-k':'clr',onclick:function(){var n=tasks.map(function(t){return {t:t.t,due:t.due}});n[i].due='';saveTasks(x,n)}},'지우기'):null);
+    box.append(h('div',{class:'trow','data-q':i},h('div',{class:'tt'},i===0?h('span',{class:'tag'},'지금'):null,it.t),h('span',{class:'qa'},acts),td));
   });
-  var ti=ctl('input','q-t','',{type:'text',maxlength:'100',placeholder:'다음에 할 일 한 줄',autocomplete:'off'});
-  var di=ctl('input','q-d','',{type:'date'});
+  var ti=ctl('input','q-t','',{type:'text',maxlength:'100',placeholder:tasks.length?'다음에 할 일 한 줄':'지금 할 한 걸음 한 줄',autocomplete:'off'});
+  var di2=ctl('input','q-d','',{type:'date'});
   box.append(h('div',{class:'qadd'},ti,h('button',{class:'btn sm',type:'button',id:'q-add',onclick:function(){
     var t=ti.value.trim();if(!t)return;
-    var it={t:t};if(di.value&&validDate(di.value))it.due=di.value;
-    save(q.concat([it]));
-  }},'추가')),h('label',{class:'qd',for:'q-d'},'마감일 (선택)',di));
+    var it={t:t,due:''};if(di2.value&&validDate(di2.value))it.due=di2.value;
+    saveTasks(x,tasks.concat([it]));
+  }},'추가')),h('label',{class:'qd',for:'q-d'},'마감일 (선택)',di2));
   return box;
 }
 function openSheet(id){
@@ -895,14 +934,13 @@ function openSheet(id){
   put(sh,topBar(p),
     h('h3',{class:'sh-t',id:'sh-t'},x.title),
     meta,
-    h('p',{class:'nx'},h('span',{class:'l'},'지금 할 한 걸음'),x.nextAction||'(비어 있어요)',x.nextDue?h('span',{class:'mu'},'  마감 '+dueFull(x.nextDue)):null),
+    qEditor(x),
     nxBtns,
     rv?h('div',{class:'stampbar'},h('span',{class:'l'},'정리할까요?'),
       h('button',{class:'btn sm','data-k':'go',type:'button',onclick:function(){changeStatus(x,'active',{lastTouched:todayISO()},'실행')}},'실행'),
       h('button',{class:'btn sm','data-k':'hold',type:'button',onclick:function(){changeStatus(x,'paused',{lastTouched:todayISO()},'보류')}},'보류'),
       h('button',{class:'btn sm','data-k':'drop',type:'button',onclick:function(){changeStatus(x,'dropped',null,'폐기')}},'폐기')):null,
     stbar,
-    qEditor(x),
     h('p',{class:'sh-h'},'관련 대화'),
     h('ul',{class:'refs'},refs.length?refs:h('li',null,'연결된 대화가 없어요')),
     h('div',{class:'btns'},
