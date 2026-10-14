@@ -289,7 +289,7 @@ textarea.big{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);b
 <script>
 (function(){
 'use strict';
-var S={data:null,base:null,sha:null,pending:[],tab:'ALL',showDone:false,onlyStale:false,skip:0,opened:{},source:'',
+var S={data:null,base:null,sha:null,pending:[],sel:[],showDone:false,onlyStale:false,skip:0,opened:{},source:'',
        conn:null,ro:false,status:'idle',statusMsg:'',saving:false,flushTimer:null,flushAt:0,choice:null};
 var KEY='fm5.dashboard.conn.v1',CKEY='fm5.dashboard.cache.v1';
 var $=function(id){return document.getElementById(id)};
@@ -687,21 +687,21 @@ if(window.matchMedia){try{matchMedia('(prefers-color-scheme: dark)').addEventLis
 function renderStamps(){
   var box=$('stamps');box.textContent='';var n=0,tot=0,mk=[];
   var vp=plist();
-  if(S.tab!=='ALL'&&!vp.some(function(p){return p.key===S.tab}))S.tab='ALL';
+  S.sel=S.sel.filter(function(k){return vp.some(function(p){return p.key===k})});
   box.classList.toggle('many',vp.length>6);
   vp.forEach(function(p){
-    var tg=target(p)>0,on=tg&&personaOn(p),sel=S.tab===p.key;
+    var tg=target(p)>0,on=tg&&personaOn(p),sel=S.sel.indexOf(p.key)>=0;
     if(tg){tot++;if(on)n++;mk.push({p:p,on:on})}
     var ring=h('span',{class:'ring'});
     if(on){ring.innerHTML=CHECK}else if(!tg){ring.append(h('span',{class:'pt'}))}
     var b=h('button',{class:'stamp'+(on?' on':'')+(tg?'':' nt')+(sel?' sel':''),type:'button','data-k':p.key,'aria-pressed':sel?'true':'false',
       'aria-label':p.short+(tg?(on?', 이번 주 만짐':', 이번 주 아직'):', 주간 목표 없음')+(sel?', 보는 중. 누르면 전체 보기':', 눌러서 이 페르소나만 보기'),
-      onclick:function(){S.tab=(S.tab===p.key)?'ALL':p.key;renderStamps();renderList()}},ring,h('span',{class:'nm'},p.short));
+      onclick:function(){var i=S.sel.indexOf(p.key);if(i>=0)S.sel.splice(i,1);else S.sel.push(p.key);renderStamps();renderList()}},ring,h('span',{class:'nm'},p.short));
     pc(b,p);box.append(b);
   });
   drawMark(mk);
-  var sp=S.tab==='ALL'?null:persona(S.tab);
-  $('bal').textContent=sp?(sp.name+' 항목만 보고 있어요. 다시 누르면 전체예요.'):
+  var sp=S.sel.length?S.sel.map(function(k){return persona(k).short}).join(', '):null;
+  $('bal').textContent=sp?(sp+'만 보는 중이에요. 다시 누르면 해제돼요.'):
     (tot===0?'주간 목표가 있는 페르소나가 없어요.':(n===0?'이번 주는 아직 아무 곳도 만지지 않았어요.':(n===tot?'이번 주 '+tot+'곳을 모두 만졌어요.':'이번 주 '+n+'곳을 만졌어요. 아직 '+(tot-n)+'곳이 남았어요.')));
 }
 function dueDays(s){return -diff(pd(s))}
@@ -779,7 +779,7 @@ function scope(){
   return S.data.projects.filter(function(x){
     if(!pvisible(x.persona))return false;
     if(!S.showDone&&(x.status==='done'||x.status==='dropped'))return false;
-    return S.tab==='ALL'||x.persona===S.tab;
+    return !S.sel.length||S.sel.indexOf(x.persona)>=0;
   });
 }
 function visible(){
@@ -792,7 +792,7 @@ function updateFlt(){
 }
 function renderTabs(){
   var vp=plist();
-  if(S.tab!=='ALL'&&!vp.some(function(p){return p.key===S.tab}))S.tab='ALL';
+  S.sel=S.sel.filter(function(k){return vp.some(function(p){return p.key===k})});
   var dc=S.data.projects.filter(function(x){return pvisible(x.persona)&&(x.status==='done'||x.status==='dropped')}).length;
   $('donel').textContent='완료·폐기 보기 ('+dc+')';
 }
@@ -828,7 +828,7 @@ function renderList(){
   var box=$('list');box.textContent='';
   var v=visible();updateFlt();
   if(!v.length){box.append(h('p',{class:'empty'},S.onlyStale?'밀린 항목이 없어요.':'표시할 항목이 없어요. 완료·폐기 보기를 켜 보세요.'));return}
-  if(S.tab==='ALL'){
+  if(S.sel.length!==1){
     rotated().forEach(function(p){
       var g=sorted(v.filter(function(x){return x.persona===p.key}));
       if(!g.length)return;
@@ -1065,7 +1065,7 @@ function openForm(mode,x){
   if(!canEdit())return;
   var isNew=mode==='new';
   var vis=plist();
-  var def=isNew?{persona:(S.tab!=='ALL'&&pvisible(S.tab)?S.tab:(vis[0]?vis[0].key:'')),title:'',status:'active',cadence:'weekly',lastTouched:todayISO(),nextAction:'',nextDue:'',sensitive:false,refs:[]}:x;
+  var def=isNew?{persona:(S.sel.length===1&&pvisible(S.sel[0])?S.sel[0]:(vis[0]?vis[0].key:'')),title:'',status:'active',cadence:'weekly',lastTouched:todayISO(),nextAction:'',nextDue:'',sensitive:false,refs:[]}:x;
   var popts=vis.map(function(p){return [p.key,p.name]});
   if(!isNew&&!vis.some(function(p){return p.key===def.persona})){var cp=persona(def.persona);if(cp)popts.push([cp.key,cp.name+' (숨김)'])}
   var f={
