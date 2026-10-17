@@ -1829,15 +1829,42 @@ function drOpen(list,total){
     var nd=inp({type:'date','aria-label':'마감'});nd.value=p.nextDue||'';
     var sk=inp({type:'checkbox'});sk.checked=!!p.sensitive;
     var dupK=normT(p.title),dup=!isUp&&S.data.projects.filter(function(x){return normT(x.title)===dupK})[0];
+    var pj=h('select',{id:'dr-j-'+d.id,'aria-label':'프로젝트'});
+    var tiLab=h('label',null,'제목 ',ti);
+    var dupEl=dup?h('div',{class:'fe'},'⚠ 비슷한 제목이 이미 있어요 ('+dup.id+')'):null;
+    var curEl=h('div',{class:'pd'});
+    var kindEl=h('div',{class:'pd'},isUp?'기존 프로젝트 갱신: '+old.id+' '+old.title:'새 프로젝트 · '+(ST[p.status]||'아이디어'));
+    var skLab=h('label',{class:'ck'},sk,'민감 항목');
+    function fillPj(){
+      var keep=pj.value;pj.textContent='';
+      pj.append(h('option',{value:''},'새 프로젝트로 만들기 (아래 제목)'));
+      S.data.projects.filter(function(x){return x.persona===ps.value&&x.status!=='done'&&x.status!=='dropped'}).forEach(function(x){
+        pj.append(h('option',{value:x.id},'기존: '+x.id+' '+(x.sensitive?'(민감 항목)':x.title)));
+      });
+      if(keep&&findP(S.data,keep)&&findP(S.data,keep).persona===ps.value)pj.value=keep;else pj.value='';
+      sync();
+    }
+    function sync(){
+      var t=pj.value?findP(S.data,pj.value):null;
+      tiLab.style.display=t?'none':'';
+      if(dupEl)dupEl.style.display=t?'none':'';
+      kindEl.textContent=t?('기존 프로젝트에 추가: '+t.id):('새 프로젝트 · '+(ST[p.status]||'아이디어'));
+      skLab.style.display=t?'none':'';
+      curEl.textContent=t?('현재 한 걸음: '+(t.nextAction||'(없음)')+' · 대기열 '+((t.queue||[]).length)+'개 — 적용하면 대기열 끝에 추가돼요'):'';
+    }
+    ps.addEventListener('change',fillPj);pj.addEventListener('change',sync);
+    if(!isUp)fillPj();
     put(card,meta,
-      isUp?h('div',{class:'pd'},'기존 프로젝트 갱신: '+old.id+' '+old.title):h('div',{class:'pd'},'새 프로젝트 · '+(ST[p.status]||'아이디어')),
-      dup?h('div',{class:'fe'},'⚠ 비슷한 제목이 이미 있어요 ('+dup.id+')'):null,
+      kindEl,
+      dupEl,
       isUp?null:h('label',null,'페르소나 ',ps),
-      isUp?null:h('label',null,'제목 ',ti),
+      isUp?null:h('label',null,'프로젝트 ',pj),
+      isUp?null:tiLab,
+      isUp?null:curEl,
       h('label',null,'지금 할 한 걸음 ',na),
       h('label',null,'마감 ',nd),
       p.queue&&p.queue.length?h('div',{class:'pd'},'대기열: '+p.queue.map(function(q){return q.t+(q.due?' ~'+q.due:'')}).join(' ▶ ')):null,
-      isUp?null:h('label',{class:'ck'},sk,'민감 항목'),
+      isUp?null:skLab,
       (d.evidence&&d.evidence.length)?h('div',{class:'pd'},'근거: '+d.evidence.map(function(e){return '“'+e+'”'}).join(' ')):null,
       msg,
       h('div',{class:'btns'},
@@ -1847,7 +1874,10 @@ function drOpen(list,total){
           if(r===null)return;
           drCall('draftReject',{id:d.id,reason:r}).then(function(){done(card)}).catch(function(){msg.textContent='처리하지 못했어요'});
         }},'거절'),
-        h('button',{class:'btn pri',type:'button',onclick:function(){drApply(d,old,{persona:ps.value,title:ti.value.trim(),nextAction:na.value.trim(),nextDue:nd.value,sensitive:sk.checked},msg,function(){done(card)})}},'적용')));
+        h('button',{class:'btn pri',type:'button',onclick:function(){
+          var target=old||(pj.value?findP(S.data,pj.value):null);
+          drApply(d,target,{persona:ps.value,title:ti.value.trim(),nextAction:na.value.trim(),nextDue:nd.value,sensitive:sk.checked},msg,function(){done(card)});
+        }},'적용')));
     cards.append(card);
   });
   dlg.addEventListener('cancel',function(){list.forEach(function(x){drLaterSet(x.id)});setTimeout(function(){dlg.remove()},0)});
@@ -1862,7 +1892,12 @@ function drApply(d,old,v,msg,ok){
     o={id:old.id,title:old.title};
     if(v.nextAction)o.nextAction=v.nextAction;
     if(v.nextDue)o.nextDue=v.nextDue;
-    if(p.queue&&p.queue.length)o.queue=p.queue.map(function(q){var x={t:q.t};if(q.due)x.due=q.due;return x});
+    if(p.queue&&p.queue.length){
+      var qb=clone(old.queue||[]),seen={};
+      qb.forEach(function(q){seen[normT(q.t)]=1});
+      p.queue.forEach(function(q){if(seen[normT(q.t)])return;var x={t:q.t};if(q.due)x.due=q.due;qb.push(x)});
+      o.queue=qb;
+    }
   }else{
     if(!v.persona){msg.textContent='페르소나를 골라 주세요';return}
     if(!v.title){msg.textContent='제목을 입력해 주세요';return}
