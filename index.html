@@ -62,6 +62,101 @@ h1,h2,h3{margin:0;font-weight:500}
 .stg .stbar{margin-bottom:6px}
 .goal{font-size:13px;margin:6px 0 0;word-break:keep-all}
 .rpt .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+/* 리포트 (14/15/16) */
+.insg{display:grid;gap:14px}
+.ins .it{font-size:12px;color:var(--mu);letter-spacing:.02em;margin:0 0 6px}
+.ins .ih{font:400 17px/1.4 var(--serif);letter-spacing:-.02em;margin:0 0 8px;word-break:keep-all}
+.ins .il{margin:0;padding:0 0 0 16px;font-size:13px;color:var(--mu);line-height:1.6;word-break:keep-all}
+.ins .is{font-size:12.5px;margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);word-break:keep-all}
+.ins-ov{border-left:4px solid var(--warn)!important}
+.hm{display:grid;grid-template-columns:22px repeat(4,1fr);gap:2px;margin-top:12px}
+.hh{font-size:11px;color:var(--mu);text-align:center;align-self:center}
+.hc{height:24px;border-radius:4px;background:color-mix(in srgb,var(--ink) calc(var(--a)*70%),var(--chip));font-size:11px;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+@media(min-width:720px){.insg{grid-column:1/-1;grid-template-columns:1fr 1fr}}
+
+.rs{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.rb{height:22px}
+.rb .rs.s-idea{color:var(--ink)}
+.rb .rs.s-pau{color:var(--ink);text-shadow:0 0 3px var(--card),0 0 3px var(--card),0 0 3px var(--card)}
+.rlg .rs{font-size:0}
+.pies{display:grid;gap:22px}
+.pblk .ptt{font-size:13px;color:var(--mu);margin:0 0 8px}
+.prow{display:flex;gap:16px;align-items:center}
+.pwrap{position:relative;width:118px;height:118px;flex:none}
+.pie{width:100%;height:100%;display:block}
+.pc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.pc b{font:400 22px/1.1 var(--serif)}
+.pc span{font-size:11px;color:var(--mu)}
+.plg{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.pl{display:grid;grid-template-columns:9px 1fr auto 34px;align-items:center;gap:7px;font-size:13px}
+.pl .dot{width:9px;height:9px;border-radius:50%;background:var(--p)}
+.pl .pn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl b{font-weight:600;font-variant-numeric:tabular-nums}
+.pl small{font-size:10px;color:var(--mu);text-align:right;font-variant-numeric:tabular-nums}
+
+
+.rpt{display:flex;flex-direction:column;gap:14px;padding-bottom:40px}
+.rsum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:16px 12px}
+.qk{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.qv{font:400 22px/1.2 var(--serif);letter-spacing:-.02em}
+.ql{font-size:11px;color:var(--mu);word-break:keep-all}
+.rh{font:400 17px/1.3 var(--serif);margin:0 0 4px;letter-spacing:-.02em}
+.rsub{font-size:12.5px;color:var(--mu);margin:0 0 12px;word-break:keep-all}
+.rlg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mu);margin:0 0 12px}
+.rlg span{display:inline-flex;align-items:center;gap:6px}
+.rlg .rs{display:inline-block;width:12px;height:12px;border-radius:4px;flex:none}
+.rs{min-width:4px}
+.rb{display:flex;gap:2px;height:14px;width:100%}
+.rb .rs{border-radius:4px;background:var(--p)}
+.rs.s-act{background:var(--p,var(--ink))}
+.rs.s-idea{background:color-mix(in srgb,var(--p,var(--mu)) 45%,var(--card))}
+.rs.s-pau{background:repeating-linear-gradient(135deg,var(--p,var(--mu)) 0 2px,transparent 2px 5px);box-shadow:inset 0 0 0 1.5px var(--p,var(--mu))}
+.rs.s-done{background:var(--chip);box-shadow:inset 0 0 0 1.5px var(--p,var(--mu))}
+.rs.none{background:var(--chip)}
+.rlg .rs.s-act{background:var(--ink)}
+.rlg .rs.s-idea{background:color-mix(in srgb,var(--ink) 45%,var(--card))}
+.rlg .rs.s-pau{background:repeating-linear-gradient(135deg,var(--ink) 0 2px,transparent 2px 5px);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.rlg .rs.s-done{background:var(--chip);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.rlg .rs.ld{background:var(--ink)}
+.rlg .rs.ef{background:color-mix(in srgb,var(--ink) 40%,var(--card))}
+.rrow{display:grid;grid-template-columns:84px 1fr 24px;align-items:center;gap:10px;padding:7px 0}
+.rn2{display:inline-flex;align-items:center;gap:7px;font-size:13px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rn2 .dot,.th .dot{width:9px;height:9px;border-radius:50%;background:var(--p);flex:none;display:inline-block}
+.rtrack{min-width:0}
+.rbw{min-width:24px}
+.rc{font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.brow{padding:8px 0;border-top:1px solid var(--line)}
+.brow:first-of-type{border-top:0}
+.bhd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.bd{font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums}
+.bd.hot{color:var(--warn);font-weight:600}
+.bl{display:flex;align-items:center;gap:8px;height:12px;margin:3px 0}
+.bar{height:8px;border-radius:2px 4px 4px 2px;min-width:2px}
+.bar.ld{background:var(--p)}
+.bar.ef{background:color-mix(in srgb,var(--p) 40%,var(--card));box-shadow:inset 0 0 0 1.5px var(--p)}
+.bv{font-size:11px;color:var(--mu);font-variant-numeric:tabular-nums;min-width:30px}
+.trk{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:0;border-top:1px solid var(--line);padding:12px 0 10px;cursor:pointer;border-radius:0}
+.trk:first-of-type{border-top:0}
+.trk:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.th{display:flex;align-items:center;gap:8px}
+.tt{flex:1;min-width:0;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gd{font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums;flex:none}
+.gd.late{color:var(--warn);font-weight:600}
+.tg{font-size:12.5px;color:var(--mu);margin:3px 0 0 17px;word-break:keep-all}
+.trk .sbar{margin:8px 0 6px}
+.tf{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mu)}
+.tf .tn{margin-left:auto}
+.wd{display:inline-flex;gap:3px;align-items:center}
+.wk{width:8px;height:8px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--line2);display:inline-block}
+.wk.on{background:color-mix(in srgb,var(--p) 55%,var(--card));box-shadow:none}
+.wk.on2{background:var(--p);box-shadow:none}
+.rdet summary{cursor:pointer;font-size:13px;color:var(--mu)}
+.rtw{overflow-x:auto;margin-top:10px}
+.rtab{border-collapse:collapse;font-size:12.5px;width:100%;white-space:nowrap}
+.rtab th,.rtab td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+.rtab th:first-child,.rtab td:first-child{text-align:left}
+@media(min-width:720px){.rpt{display:grid;grid-template-columns:1fr 1fr;align-items:start}.rsum,.rdet,.wide{grid-column:1/-1}}
+
 .hr{display:flex;align-items:center;gap:2px;margin-right:-10px}
 .stat{font-size:12px;color:var(--mu);text-align:right;max-width:160px;line-height:1.4}
 .lb{background:none;border:0;padding:0;color:var(--ink);text-decoration:underline;font-size:12px}
@@ -680,15 +775,238 @@ function setView(v){
   if(S.view===v)return;
   S.view=v;renderHead();applyView();window.scrollTo(0,0);
 }
+/* ---------- 리포트 ---------- */
+var RP_DAYS=28,RP_WEEKS=8;
+function logTime(l){var t=String(l.ts||'');if(t.length<=19&&t.indexOf('Z')<0&&t.indexOf('+')<0)t+='Z';return new Date(t)}
+function rpWeekStarts(){
+  var a=[],i;for(i=RP_WEEKS-1;i>=0;i--){var d=new Date(ws);d.setDate(ws.getDate()-7*i);a.push(d)}
+  return a;
+}
+function rpTouches(){
+  /* id -> 체크인 시각 배열 (28일/8주 계산용) */
+  var m={};
+  (S.data.log||[]).forEach(function(l){
+    if(l.kind!=='checkin'||!l.id)return;
+    (m[l.id]=m[l.id]||[]).push(logTime(l));
+  });
+  return m;
+}
+function rpBar(parts,total,label){
+  var bar=h('div',{class:'rb',role:'img','aria-label':label});
+  parts.forEach(function(p){
+    if(!p.n)return;
+    bar.append(h('span',{class:'rs '+p.cls,style:'flex:'+p.n+' 1 0',title:p.t+' '+p.n}));
+  });
+  if(!total)bar.append(h('span',{class:'rs none',style:'flex:1 1 0'}));
+  return bar;
+}
+function pieBlock(title,unit,pl,vals){
+  var idx=pl.map(function(_,i){return i});idx.sort(function(a,b){return vals[b]-vals[a]||a-b});
+  pl=idx.map(function(i){return pl[i]});vals=idx.map(function(i){return vals[i]});
+  var tot=vals.reduce(function(a,v){return a+v},0),R=44,C=2*Math.PI*R,GAP=tot>1?2:0;
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 120 120');svg.setAttribute('class','pie');svg.setAttribute('role','img');
+  svg.setAttribute('aria-label',title+' '+pl.map(function(p,i){return p.name+' '+vals[i]}).join(', '));
+  function ring(color,len,off,tip){
+    var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',60);c.setAttribute('cy',60);c.setAttribute('r',R);c.setAttribute('fill','none');
+    c.setAttribute('stroke-width',22);if(color&&color.key){c.setAttribute('class','p');c.style.setProperty('--pl',color.color);c.style.setProperty('--pd',color.colorDark||color.color);c.style.stroke='var(--p)'}else c.setAttribute('stroke','var(--chip)');
+    c.setAttribute('stroke-dasharray',len+' '+(C-len));c.setAttribute('stroke-dashoffset',-off);
+    c.setAttribute('transform','rotate(-90 60 60)');
+    if(tip){var t=document.createElementNS('http://www.w3.org/2000/svg','title');t.textContent=tip;c.appendChild(t)}
+    return c;
+  }
+  var wrap=h('div',{class:'pwrap'});
+  if(!tot)svg.appendChild(ring(null,C,0));
+  else{
+    var off=0;
+    pl.forEach(function(p,i){
+      if(!vals[i])return;
+      var len=vals[i]/tot*C;
+      svg.appendChild(ring(p,Math.max(len-GAP,0.5),off,p.name+' '+vals[i]+unit+' · '+Math.round(vals[i]*100/tot)+'%'));
+      off+=len;
+    });
+  }
+  wrap.append(svg,h('div',{class:'pc'},h('b',null,String(tot)),h('span',null,unit.trim())));
+  var lg=h('div',{class:'plg'});
+  pl.forEach(function(p,i){
+    var row=h('div',{class:'pl'},h('i',{class:'dot'}),h('span',{class:'pn'},p.name),h('b',null,vals[i]+unit),h('small',null,tot?Math.round(vals[i]*100/tot)+'%':'-'));
+    pc(row,p);lg.append(row);
+  });
+  return h('div',{class:'pblk'},h('div',{class:'ptt'},title),h('div',{class:'prow'},wrap,lg));
+}
+
+/* ---------- 인사이트 ---------- */
+function lastTouchOf(x,T){
+  var d=pd(x.lastTouched);
+  (T[x.id]||[]).forEach(function(t){var l=new Date(t);l.setHours(0,0,0,0);if(l>d)d=l});
+  return d;
+}
+function insCard(kind,title,head,lines,extra){
+  return h('div',{class:'card ins ins-'+kind},
+    h('div',{class:'it'},title),
+    h('p',{class:'ih'},head),
+    lines&&lines.length?h('ul',{class:'il'},lines.map(function(t){return h('li',null,t)})):null,
+    extra||null);
+}
+function energyMap(T){
+  /* 요일(월~일) x 시간대(새벽/오전/오후/저녁), 최근 8주 체크인 */
+  var from=new Date(today);from.setDate(today.getDate()-55);
+  var DAYS=['월','화','수','목','금','토','일'],BANDS=['새벽','오전','오후','저녁'];
+  var g=DAYS.map(function(){return [0,0,0,0]}),n=0;
+  Object.keys(T).forEach(function(id){
+    var x=S.data.projects.filter(function(q){return q.id===id})[0];
+    if(!x||x.status==='dropped')return;
+    T[id].forEach(function(t){
+      if(t<from||isNaN(t))return;
+      var d=(t.getDay()+6)%7,b=Math.floor(t.getHours()/6);g[d][b]++;n++;
+    });
+  });
+  return {g:g,n:n,DAYS:DAYS,BANDS:BANDS};
+}
+function insights(P,T,pl,load,eff,n28){
+  var out=[],LT=load.reduce(function(a,v){return a+v},0),ET=eff.reduce(function(a,v){return a+v},0);
+  var ps=pl.map(function(p,i){return {p:p,i:i,l:load[i],e:eff[i],ls:LT?load[i]*100/LT:0,es:ET?eff[i]*100/ET:0}});
+
+  /* 과부하: 맡은 활성 비중보다 체크인이 모자란 영역 */
+  var ov=ps.filter(function(o){return o.l>=3&&o.ls-o.es>=10}).sort(function(a,b){return (b.ls-b.es)-(a.ls-a.es)});
+  if(ov.length){
+    var o=ov[0];
+    out.push(insCard('ov','과부하',o.p.name+' 영역이 버거워 보여요',
+      ov.map(function(q){return q.p.name+' · 활성 '+q.l+'개('+Math.round(q.ls)+'%)인데 체크인은 '+q.e+'회('+Math.round(q.es)+'%)'}),
+      h('p',{class:'is'},'속도 조절 후보: 활성 일부를 보류로 옮기거나, 다음 행동을 더 작게 쪼개 보세요.')));
+  }else out.push(insCard('ov','과부하','뚜렷한 과부하는 없어요',['활성 3개 이상이면서 부하 비중이 노력 비중보다 10%p 넘게 높은 영역이 없어요.']));
+
+  /* 쏠림 */
+  var top=ps.slice().sort(function(a,b){return b.e-a.e}),zero=ps.filter(function(o){return o.l>0&&o.e===0});
+  if(ET>=8&&(top[0].es>=35||zero.length)){
+    var ln=[];
+    if(top[0].es>=35)ln.push(top[0].p.name+'에 체크인 '+top[0].e+'회('+Math.round(top[0].es)+'%)가 몰려 있어요.');
+    if(zero.length)ln.push('최근 4주 체크인 0회: '+zero.map(function(q){return q.p.name+'(활성 '+q.l+')'}).join(', '));
+    out.push(insCard('sk','쏠림',top[0].es>=35?top[0].p.name+'에 쏠려 있어요':'손이 안 간 영역이 있어요',ln));
+  }else out.push(insCard('sk','쏠림',ET<8?'기록이 더 쌓이면 보여요':'골고루 쓰고 있어요',[ET<8?'최근 4주 체크인이 8회 미만이에요.':'한 영역이 35% 이상 차지하지 않고, 손 안 간 영역도 없어요.']));
+
+  /* 정체: 활성인데 4주 이상 손이 안 간 프로젝트 (민감 제외) */
+  var st=P.filter(function(x){return x.status==='active'&&!x.sensitive&&diff(lastTouchOf(x,T))>=28})
+    .map(function(x){return {x:x,d:diff(lastTouchOf(x,T))}}).sort(function(a,b){return b.d-a.d});
+  if(st.length){
+    out.push(insCard('st','정체','활성인데 4주 넘게 멈춘 프로젝트 '+st.length+'개',
+      st.slice(0,5).map(function(o){var p=persona(o.x.persona);return (p?p.name+' · ':'')+o.x.title+' — '+o.d+'일'}),
+      st.length>5?h('p',{class:'is'},'외 '+(st.length-5)+'개')
+        :h('p',{class:'is'},'다시 굴릴지, 보류로 내릴지 하나씩 정해 보세요.')));
+  }else out.push(insCard('st','정체','멈춘 활성 프로젝트가 없어요',['활성 프로젝트 모두 최근 4주 안에 손이 갔어요.']));
+
+  /* 에너지 패턴 */
+  var em=energyMap(T);
+  if(em.n<12){
+    out.push(insCard('en','에너지 패턴','기록이 더 쌓이면 보여요',['최근 8주 체크인이 12회 미만이에요. (지금 '+em.n+'회)']));
+  }else{
+    var dsum=em.g.map(function(r){return r.reduce(function(a,v){return a+v},0)}),bsum=[0,1,2,3].map(function(b){return em.g.reduce(function(a,r){return a+r[b]},0)});
+    var di=dsum.indexOf(Math.max.apply(null,dsum)),bi=bsum.indexOf(Math.max.apply(null,bsum));
+    var low=dsum.map(function(v,i){return {v:v,i:i}}).sort(function(a,b){return a.v-b.v})[0];
+    var mxv=Math.max.apply(null,em.g.map(function(r){return Math.max.apply(null,r)}));
+    var tbl=h('div',{class:'hm',role:'table','aria-label':'요일과 시간대별 체크인'});
+    tbl.append(h('span'));em.BANDS.forEach(function(b){tbl.append(h('span',{class:'hh'},b))});
+    em.g.forEach(function(r,d){
+      tbl.append(h('span',{class:'hh'},em.DAYS[d]));
+      r.forEach(function(v,b){
+        tbl.append(h('span',{class:'hc',style:'--a:'+(v?Math.max(v/mxv,.15):0)+(v/mxv>.55?';color:var(--card)':';color:var(--ink)'),title:em.DAYS[d]+' '+em.BANDS[b]+' · '+v+'회'},v?String(v):''));
+      });
+    });
+    out.push(insCard('en','에너지 패턴',em.DAYS[di]+'요일 '+em.BANDS[bi]+'에 가장 많이 움직여요',
+      ['요일: '+em.DAYS[di]+' '+dsum[di]+'회로 최다, '+em.DAYS[low.i]+' '+low.v+'회로 최소','시간대: '+em.BANDS[bi]+' '+bsum[bi]+'회 ('+Math.round(bsum[bi]*100/em.n)+'%) · 최근 8주 '+em.n+'회 기준'],tbl));
+  }
+  return out;
+}
 function renderReport(){
   var box=$('view-report');box.textContent='';
   if(!S.data){box.append(h('p',{class:'empty'},'저장소를 연결하면 리포트를 볼 수 있어요.'));return}
-  var act=S.data.projects.filter(function(x){return x.status!=='dropped'});
-  var withStage=act.filter(function(x){return stageOf(x)>=0}).length;
-  box.append(h('div',{class:'card'},
-    h('p',{class:'act'},'리포트를 준비하고 있어요'),
-    h('p',{class:'sub'},'다음 단계에서 페르소나별 프로젝트 수, 단계 막대, 인사이트가 채워져요. 지금은 단계와 최종 목표를 먼저 입력해 두세요.'),
-    h('p',{class:'sub',id:'rp-cnt'},'단계를 정한 프로젝트 '+withStage+' / '+act.length+'개')));
+  var P=S.data.projects.filter(function(x){return x.status!=='dropped'});
+  var T=rpTouches(),from=new Date(today);from.setDate(today.getDate()-(RP_DAYS-1));
+  var end=new Date(today);end.setDate(today.getDate()+1);
+  function n28(x){return (T[x.id]||[]).filter(function(t){return t>=from&&t<end}).length}
+  var pl=plist(),tot=P.length,withStage=P.filter(function(x){return stageOf(x)>=0&&!x.sensitive});
+  var chk=P.reduce(function(a,x){return a+n28(x)},0);
+  var pcts=withStage.map(stagePct).filter(function(v){return v!==null});
+  var avg=pcts.length?Math.round(pcts.reduce(function(a,v){return a+v},0)/pcts.length):null;
+
+  /* 요약 */
+  var sum=h('div',{class:'card rsum'});
+  [['프로젝트',tot+'개'],['최근 4주 체크인',chk+'회'],['단계를 정한 곳',withStage.length+'개'],['평균 진행',avg===null?'-':avg+'%']].forEach(function(r){
+    sum.append(h('div',{class:'qk'},h('span',{class:'qv'},r[1]),h('span',{class:'ql'},r[0])));
+  });
+  box.append(sum);
+
+  /* 1. 페르소나별 프로젝트 (활성·보류·아이디어, 완료 제외) */
+  var ST_ORDER=[['active','활성','s-act'],['paused','보류','s-pau'],['idea','아이디어','s-idea']];
+  var c1=h('div',{class:'card wide'},h('h2',{class:'rh'},'페르소나별 프로젝트'));
+  var lg=h('div',{class:'rlg'});
+  ST_ORDER.forEach(function(s){lg.append(h('span',null,h('i',{class:'rs '+s[2]}),s[1]))});
+  c1.append(lg);
+  var mx=1;
+  var rows1=pl.map(function(p){
+    var mine=P.filter(function(x){return x.persona===p.key&&x.status!=='done'});
+    mx=Math.max(mx,mine.length);return {p:p,mine:mine};
+  });
+  rows1.sort(function(a,b){return b.mine.length-a.mine.length});
+  rows1.forEach(function(r){
+    var parts=ST_ORDER.map(function(s){return {n:r.mine.filter(function(x){return x.status===s[0]}).length,cls:s[2],t:s[1]}});
+    var bar=h('div',{class:'rb',role:'img','aria-label':r.p.name+' '+parts.map(function(q){return q.t+' '+q.n}).join(', ')});
+    parts.forEach(function(q){if(q.n)bar.append(h('span',{class:'rs '+q.cls,style:'flex:'+q.n+' 1 0',title:q.t+' '+q.n},String(q.n)))});
+    if(!r.mine.length)bar.append(h('span',{class:'rs none',style:'flex:1 1 0'}));
+    var wrap=h('div',{class:'rbw',style:'width:'+(r.mine.length?Math.max(r.mine.length/mx*100,10):100)+'%'},bar);
+    var row=h('div',{class:'rrow'},
+      h('span',{class:'rn2'},h('i',{class:'dot'}),r.p.name),
+      h('div',{class:'rtrack'},wrap),
+      h('span',{class:'rc'},String(r.mine.length)));
+    pc(row,r.p);c1.append(row);
+  });
+  box.append(c1);
+
+  /* 2. 부하와 노력의 균형 (파이) */
+  var c2=h('div',{class:'card wide'},h('h2',{class:'rh'},'부하와 노력의 균형'));
+  var load=pl.map(function(p){return P.filter(function(x){return x.persona===p.key&&x.status==='active'}).length});
+  var eff=pl.map(function(p){return P.filter(function(x){return x.persona===p.key}).reduce(function(a,x){return a+n28(x)},0)});
+  var pies=h('div',{class:'pies'});
+  pies.append(pieBlock('활성 프로젝트',' 개',pl,load),pieBlock('최근 4주 체크인',' 회',pl,eff));
+  c2.append(pies);
+  box.append(c2);
+  var insBox=h('div',{class:'insg'});insights(P,T,pl,load,eff,n28).forEach(function(c){insBox.append(c)});
+  box.insertBefore(insBox,sum.nextSibling);
+
+  /* 3. 진행 트랙 (단계를 정한 프로젝트만) */
+  var c3=h('div',{class:'card wide'},h('h2',{class:'rh'},'진행 트랙'));
+  if(!withStage.length){
+    c3.append(h('p',{class:'empty'},'아직 단계를 정한 프로젝트가 없어요. 프로젝트 상세에서 단계를 골라 보세요.'));
+  }else{
+    var order={};pl.forEach(function(p,i){order[p.key]=i});
+    withStage.slice().sort(function(a,b){
+      return ((stagePct(b)||0)-(stagePct(a)||0))||(order[a.persona]-order[b.persona]);
+    }).forEach(function(x){
+      var p=persona(x.persona);if(!p||p.hidden)return;
+      var pct=stagePct(x);
+      var due=(x.goalDue&&dueDays(x.goalDue)>=0)?h('span',{class:'gd'+(dueDays(x.goalDue)<0?' late':''),title:'최종 마감 '+x.goalDue},dueText(x.goalDue)):null;
+      var row=h('button',{type:'button',class:'trk',onclick:function(){openSheet(x.id)}},
+        h('div',{class:'th'},h('i',{class:'dot'}),h('span',{class:'tt'},x.title),due),
+        x.goal?h('div',{class:'tg'},'목표 · '+x.goal):null,
+        stageBar(x),
+        h('div',{class:'tf'},h('span',null,(x.status==='done'?'완료':stageLabel(x.stage))+' · '+pct+'%')));
+      pc(row,p);c3.append(row);
+    });
+  }
+  box.append(c3);
+
+  /* 표로 보기 (접근성) */
+  var tb=h('table',{class:'rtab'},h('thead',null,h('tr',null,['페르소나','활성','보류','아이디어','체크인(4주)'].map(function(t){return h('th',null,t)}))));
+  var body=h('tbody');
+  pl.map(function(p,i){return {p:p,i:i}}).sort(function(a,b){return load[b.i]-load[a.i]}).forEach(function(o){
+    var p=o.p,i=o.i;
+    var m=P.filter(function(x){return x.persona===p.key});
+    function c(s){return m.filter(function(x){return x.status===s}).length}
+    body.append(h('tr',null,[p.name,c('active'),c('paused'),c('idea'),eff[i]].map(function(v){return h('td',null,String(v))})));
+  });
+  tb.append(body);
+  box.append(h('details',{class:'card rdet'},h('summary',null,'표로 보기'),h('div',{class:'rtw'},tb)));
 }
 function lockIcon(){var s=document.createElement('span');s.setAttribute('aria-hidden','true');s.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="10" height="7" rx="1.8"/><path d="M5.2 7V5.2a2.8 2.8 0 0 1 5.6 0V7"/></svg>';return s}
 var CHECK='<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5l3.2 3.2L14 5.8"/></svg>';
