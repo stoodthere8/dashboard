@@ -1118,6 +1118,13 @@ function urgentList(){
   c.sort(function(m,n){return (effDue(m).days-effDue(n).days)||(score(n)-score(m))});
   return c;
 }
+var DKEY='fm5.dashboard.dismiss.v1';
+function dismissed(){
+  try{var o=JSON.parse(localStorage.getItem(DKEY)||'null');if(o&&o.d===todayISO()&&Array.isArray(o.ids))return o.ids}catch(e){}
+  return [];
+}
+function setDismissed(ids){try{localStorage.setItem(DKEY,JSON.stringify({d:todayISO(),ids:ids}))}catch(e){}}
+function dismissCard(x){var a=dismissed();if(a.indexOf(x.id)<0)a.push(x.id);setDismissed(a);renderHero()}
 function heroCard(x,i,n,railGo){
   var p=persona(x.persona),ed=effDue(x),q=(x.queue||[]).length;
   var due=ed&&ed.days<=3;
@@ -1133,15 +1140,18 @@ function heroCard(x,i,n,railGo){
     h('div',{class:'grow'},h('p',{class:'act'},act),h('p',{class:'sub'},sub)),
     h('div',{class:'btns'},
       h('button',{class:'btn pri sm','data-k':'ci',type:'button',onclick:function(){checkin(x)}},'체크인'),
-      h('button',{class:'btn sm',type:'button',onclick:function(){openSheet(x.id)}},'자세히'))),p);
+      h('button',{class:'btn sm',type:'button',onclick:function(){openSheet(x.id)}},'자세히'),
+      h('button',{class:'btn sm',type:'button','data-k':'dm',onclick:function(){dismissCard(x)}},'넘기기'))),p);
 }
 function renderHero(){
   var box=$('hero');
   var old=box.firstChild&&box.firstChild.classList&&box.firstChild.classList.contains('rail')?box.firstChild.scrollLeft:0;
   box.textContent='';
-  var ug=urgentList(),cs=candidates(),all=ug.concat(cs);
+  var dm=dismissed();
+  var ug=urgentList(),cs=candidates(),all0=ug.concat(cs),all=all0.filter(function(x){return dm.indexOf(x.id)<0}),hid=all0.length-all.length;
   if(!all.length){
     box.append(h('div',{class:'rail one'},h('div',{class:'hero'},h('p',{class:'act'},'오늘 제안할 항목이 없어요'),h('p',{class:'sub'},'이번 주 모든 페르소나를 만졌거나, 제안 조건에 맞는 활성 항목이 없어요.'))));
+    if(hid)box.append(h('button',{class:'lb more',type:'button',id:'dm-undo',onclick:function(){setDismissed([]);renderHero()}},'넘긴 카드 '+hid+'개 다시 보기'));
     return;
   }
   var rail=h('div',{class:'rail'+(all.length===1?' one':''),role:'region','aria-label':'오늘 챙길 항목'});
@@ -1153,6 +1163,7 @@ function renderHero(){
   var first=rail.querySelector('[data-k=ci]');if(first)first.id='hero-ci';
   box.append(rail);
   rail.scrollLeft=old;
+  if(hid)box.append(h('button',{class:'lb more',type:'button',id:'dm-undo',onclick:function(){setDismissed([]);renderHero()}},'넘긴 카드 '+hid+'개 다시 보기'));
 }
 function scope(){
   return S.data.projects.filter(function(x){
