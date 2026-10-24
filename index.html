@@ -236,6 +236,7 @@ h1,h2,h3{margin:0;font-weight:500}
 
 dialog{border:0;padding:0;background:var(--card);color:var(--ink);width:min(560px,100%);max-width:100%;max-height:90vh;margin:auto auto 0;border-radius:18px 18px 0 0}
 dialog::backdrop{background:var(--scrim)}
+#dr-dlg label{display:block;margin:8px 0;font-size:13px}#dr-dlg label.ck{display:flex;gap:8px;align-items:center}#dr-dlg input[type=text],#dr-dlg input[type=date],#dr-dlg select{display:block;width:100%;box-sizing:border-box;margin-top:3px}#dr-dlg .sec{margin-bottom:14px}
 @media (min-width:640px){dialog{margin:auto;border-radius:18px}}
 .sheet{padding:22px 20px calc(22px + env(safe-area-inset-bottom));overflow:auto;max-height:90vh}
 .sh-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
@@ -347,6 +348,24 @@ textarea.big{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);b
 </style>
 </head>
 <body>
+<!-- SITE SWITCHER: rootq / dashboard 공통 상단 바 -->
+<style>
+  .site-switcher { background:#15171c; color:#cfd3da; font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  .site-switcher-inner { max-width:1040px; margin:0 auto; padding:7px 24px; display:flex; align-items:center; gap:10px; font-size:12px; letter-spacing:.02em; }
+  .site-switcher-link { color:#9aa0ab; text-decoration:none; padding:2px 3px; }
+  .site-switcher-link:hover { color:#fff; }
+  .site-switcher-link[aria-current="page"] { color:#fff; font-weight:600; border-bottom:1px solid currentColor; }
+  .site-switcher-sep { color:#4b4f58; }
+  @media (max-width: 480px) { .site-switcher-inner { padding:7px 16px; } }
+</style>
+<div class="site-switcher" role="navigation" aria-label="사이트 전환">
+  <div class="site-switcher-inner">
+    <a href="https://stoodthere8.github.io/rootq/" class="site-switcher-link">Root Q</a>
+    <span class="site-switcher-sep">·</span>
+    <a href="https://stoodthere8.github.io/dashboard/" class="site-switcher-link" aria-current="page">오늘의 5분</a>
+  </div>
+</div>
+
 <main class="wrap" id="app">
   <header class="head">
     <div class="hl">
@@ -1118,13 +1137,6 @@ function urgentList(){
   c.sort(function(m,n){return (effDue(m).days-effDue(n).days)||(score(n)-score(m))});
   return c;
 }
-var DKEY='fm5.dashboard.dismiss.v1';
-function dismissed(){
-  try{var o=JSON.parse(localStorage.getItem(DKEY)||'null');if(o&&o.d===todayISO()&&Array.isArray(o.ids))return o.ids}catch(e){}
-  return [];
-}
-function setDismissed(ids){try{localStorage.setItem(DKEY,JSON.stringify({d:todayISO(),ids:ids}))}catch(e){}}
-function dismissCard(x){var a=dismissed();if(a.indexOf(x.id)<0)a.push(x.id);setDismissed(a);renderHero()}
 function heroCard(x,i,n,railGo){
   var p=persona(x.persona),ed=effDue(x),q=(x.queue||[]).length;
   var due=ed&&ed.days<=3;
@@ -1140,18 +1152,15 @@ function heroCard(x,i,n,railGo){
     h('div',{class:'grow'},h('p',{class:'act'},act),h('p',{class:'sub'},sub)),
     h('div',{class:'btns'},
       h('button',{class:'btn pri sm','data-k':'ci',type:'button',onclick:function(){checkin(x)}},'체크인'),
-      h('button',{class:'btn sm',type:'button',onclick:function(){openSheet(x.id)}},'자세히'),
-      h('button',{class:'btn sm',type:'button','data-k':'dm',onclick:function(){dismissCard(x)}},'넘기기'))),p);
+      h('button',{class:'btn sm',type:'button',onclick:function(){openSheet(x.id)}},'자세히'))),p);
 }
 function renderHero(){
   var box=$('hero');
   var old=box.firstChild&&box.firstChild.classList&&box.firstChild.classList.contains('rail')?box.firstChild.scrollLeft:0;
   box.textContent='';
-  var dm=dismissed();
-  var ug=urgentList(),cs=candidates(),all0=ug.concat(cs),all=all0.filter(function(x){return dm.indexOf(x.id)<0}),hid=all0.length-all.length;
+  var ug=urgentList(),cs=candidates(),all=ug.concat(cs);
   if(!all.length){
     box.append(h('div',{class:'rail one'},h('div',{class:'hero'},h('p',{class:'act'},'오늘 제안할 항목이 없어요'),h('p',{class:'sub'},'이번 주 모든 페르소나를 만졌거나, 제안 조건에 맞는 활성 항목이 없어요.'))));
-    if(hid)box.append(h('button',{class:'lb more',type:'button',id:'dm-undo',onclick:function(){setDismissed([]);renderHero()}},'넘긴 카드 '+hid+'개 다시 보기'));
     return;
   }
   var rail=h('div',{class:'rail'+(all.length===1?' one':''),role:'region','aria-label':'오늘 챙길 항목'});
@@ -1163,7 +1172,6 @@ function renderHero(){
   var first=rail.querySelector('[data-k=ci]');if(first)first.id='hero-ci';
   box.append(rail);
   rail.scrollLeft=old;
-  if(hid)box.append(h('button',{class:'lb more',type:'button',id:'dm-undo',onclick:function(){setDismissed([]);renderHero()}},'넘긴 카드 '+hid+'개 다시 보기'));
 }
 function scope(){
   return S.data.projects.filter(function(x){
@@ -1782,7 +1790,7 @@ function revMaps(){
   S.data.config.cadenceOptions.forEach(function(c){REV_CAD[c.label]=c.key});
 }
 function normT(t){return String(t||'').toLowerCase().replace(/[\s\-_·:()\[\].,\/]+/g,'')}
-function afterLoad(){if(S.wantAdmin){S.wantAdmin=false;openAdmin()}}
+function afterLoad(){if(S.wantAdmin){S.wantAdmin=false;openAdmin()}drCheck()}
 function openAdmin(){
   if(needData())return;
   closeDlg();
@@ -2240,6 +2248,150 @@ $('gear').addEventListener('click',openSettings);
 $('adm-back').addEventListener('click',closeAdmin);
 window.addEventListener('beforeunload',function(e){if(S.pending.length||S.status==='error'){e.preventDefault();e.returnValue=''}});
 window.addEventListener('online',function(){if(S.status==='error')flush()});
+
+/* ---------- 대화 자동 반영: 초안 확인 팝업 (저장소 연결 + 쓰기 가능 상태에서만) ---------- */
+var DR_URL='https://rootq-memo.stoodthere8.workers.dev',DR_LATER='fm5.dashboard.draftLater.v1',drChecked=false;
+function drCall(mode,extra){
+  var c=S.conn;
+  return fetch(DR_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(Object.assign({mode:mode,target:'dashboard',gh:{owner:c.owner,repo:c.repo,token:c.token}},extra||{}))})
+    .then(function(r){return r.json().then(function(d){if(!r.ok||d.error)throw new Error(d.error||'server');return d})});
+}
+function drLater(){try{return JSON.parse(localStorage.getItem(DR_LATER)||'{}')}catch(e){return {}}}
+function drLaterSet(id){try{var m=drLater();m[id]=Date.now();localStorage.setItem(DR_LATER,JSON.stringify(m))}catch(e){}}
+function drCheck(){
+  if(drChecked||S.ro||!S.conn||!S.base||!S.data||(S.conn.api&&S.conn.api!=='https://api.github.com'))return;
+  drChecked=true;
+  // 분석기가 기존 프로젝트와 맞춰 볼 수 있게 목록(민감 항목 제외)을 알려 줘요.
+  drCall('ctxPutProjects',{projects:S.data.projects.filter(function(p){return !p.sensitive}).map(function(p){return {id:p.id,persona:p.persona,title:p.title,status:p.status}})}).catch(function(){});
+  drCall('draftsList').then(function(d){
+    var later=drLater(),now=Date.now();
+    var list=(d.drafts||[]).filter(function(x){return !(later[x.id]&&now-later[x.id]<86400000)});
+    if(list.length)drOpen(list,d.pendingTotal||list.length);
+  }).catch(function(){drChecked=false});
+}
+function drOpen(list,total){
+  var dlg=h('dialog',{id:'dr-dlg'}),box=h('div',{class:'sheet'}),cards=h('div');
+  box.append(h('h2',{class:'sh-h'},'대화에서 만든 초안 '+list.length+'건'+(total>list.length?' (대기 '+total+'건 중)':'')),
+    h('p',{class:'hint'},'적용하기 전에는 프로젝트에 아무 변화가 없어요. 적용하면 변경 이력에 남고 되돌릴 수 있어요.'),cards,
+    h('div',{class:'btns',style:'margin-top:12px'},h('button',{class:'btn',type:'button',onclick:function(){list.forEach(function(x){drLaterSet(x.id)});dlg.close();dlg.remove()}},'모두 나중에')));
+  dlg.append(box);document.body.append(dlg);
+  var remaining=list.length;
+  function done(card){card.remove();remaining--;if(remaining<=0){dlg.close();dlg.remove();rerender()}}
+  list.forEach(function(d){
+    var f=d.file||{},p=d.payload||{};
+    var age=Math.floor((Date.now()-d.createdAt)/86400000);
+    var card=h('div',{class:'sec',style:'border-top:1px solid var(--line);padding-top:10px'});
+    var meta=h('div',{class:'pd'},'대화 '+(f.date||'')+' · '+(f.name||'')+(age>=14?' · 오래됨('+age+'일)':''),f.link?[' · ',h('a',{href:f.link,target:'_blank',rel:'noopener'},'원문')]:null);
+    var msg=h('div',{class:'fe',role:'alert'});
+    if(d.kind==='none'){
+      card.append(meta,h('div',null,'추출 없음 — '+(p.note||'프로젝트로 만들 내용을 찾지 못했어요.')),
+        h('div',{class:'btns'},h('button',{class:'btn pri',type:'button',onclick:function(){drCall('draftReject',{id:d.id}).then(function(){done(card)}).catch(function(){msg.textContent='처리하지 못했어요'})}},'확인')));
+      cards.append(card);return;
+    }
+    var old=p.id?findP(S.data,String(p.id)):null;
+    var isUp=!!old;
+    var ps=sel('dr-p-'+d.id,[['','페르소나 선택']].concat(plist(true).map(function(q){return [q.key,q.name]})),(!isUp&&persona(p.persona))?p.persona:'');
+    var ti=inp({type:'text',maxlength:'80','aria-label':'제목'});ti.value=isUp?old.title:p.title;
+    var na=inp({type:'text',maxlength:'200','aria-label':'지금 할 한 걸음'});na.value=p.nextAction||'';
+    var nd=inp({type:'date','aria-label':'마감'});nd.value=p.nextDue||'';
+    var sk=inp({type:'checkbox'});sk.checked=!!p.sensitive;
+    var dupK=normT(p.title),dup=!isUp&&S.data.projects.filter(function(x){return normT(x.title)===dupK})[0];
+    var pj=h('select',{id:'dr-j-'+d.id,'aria-label':'프로젝트'});
+    var tiLab=h('label',null,'제목 ',ti);
+    var dupEl=dup?h('div',{class:'fe'},'⚠ 비슷한 제목이 이미 있어요 ('+dup.id+')'):null;
+    var curEl=h('div',{class:'pd'});
+    var kindEl=h('div',{class:'pd'},isUp?'기존 프로젝트 갱신: '+old.id+' '+old.title:'새 프로젝트 · '+(ST[p.status]||'아이디어'));
+    var skLab=h('label',{class:'ck'},sk,'민감 항목');
+    function fillPj(){
+      var keep=pj.value;pj.textContent='';
+      pj.append(h('option',{value:''},'새 프로젝트로 만들기 (아래 제목)'));
+      S.data.projects.filter(function(x){return x.persona===ps.value&&x.status!=='done'&&x.status!=='dropped'}).forEach(function(x){
+        pj.append(h('option',{value:x.id},'기존: '+x.id+' '+(x.sensitive?'(민감 항목)':x.title)));
+      });
+      if(keep&&findP(S.data,keep)&&findP(S.data,keep).persona===ps.value)pj.value=keep;else pj.value='';
+      sync();
+    }
+    function sync(){
+      var t=pj.value?findP(S.data,pj.value):null;
+      tiLab.style.display=t?'none':'';
+      if(dupEl)dupEl.style.display=t?'none':'';
+      kindEl.textContent=t?('기존 프로젝트에 추가: '+t.id):('새 프로젝트 · '+(ST[p.status]||'아이디어'));
+      skLab.style.display=t?'none':'';
+      curEl.textContent=t?('현재 한 걸음: '+(t.nextAction||'(없음)')+' · 대기열 '+((t.queue||[]).length)+'개 — 적용하면 대기열 끝에 추가돼요'):'';
+    }
+    ps.addEventListener('change',fillPj);pj.addEventListener('change',sync);
+    if(!isUp)fillPj();
+    put(card,meta,
+      kindEl,
+      dupEl,
+      isUp?null:h('label',null,'페르소나 ',ps),
+      isUp?null:h('label',null,'프로젝트 ',pj),
+      isUp?null:tiLab,
+      isUp?null:curEl,
+      h('label',null,'지금 할 한 걸음 ',na),
+      h('label',null,'마감 ',nd),
+      p.queue&&p.queue.length?h('div',{class:'pd'},'대기열: '+p.queue.map(function(q){return q.t+(q.due?' ~'+q.due:'')}).join(' ▶ ')):null,
+      isUp?null:skLab,
+      (d.evidence&&d.evidence.length)?h('div',{class:'pd'},'근거: '+d.evidence.map(function(e){return '“'+e+'”'}).join(' ')):null,
+      msg,
+      h('div',{class:'btns'},
+        h('button',{class:'btn',type:'button',onclick:function(){drLaterSet(d.id);done(card)}},'나중에'),
+        h('button',{class:'btn',type:'button',onclick:function(){
+          var r=window.prompt('거절 이유를 한 줄로 남기면 다음 선별 기준에 반영돼요. (비워 두면 이유 없이 거절)','');
+          if(r===null)return;
+          drCall('draftReject',{id:d.id,reason:r}).then(function(){done(card)}).catch(function(){msg.textContent='처리하지 못했어요'});
+        }},'거절'),
+        h('button',{class:'btn pri',type:'button',onclick:function(){
+          var target=old||(pj.value?findP(S.data,pj.value):null);
+          drApply(d,target,{persona:ps.value,title:ti.value.trim(),nextAction:na.value.trim(),nextDue:nd.value,sensitive:sk.checked},msg,function(){done(card)});
+        }},'적용')));
+    cards.append(card);
+  });
+  dlg.addEventListener('cancel',function(){list.forEach(function(x){drLaterSet(x.id)});setTimeout(function(){dlg.remove()},0)});
+  dlg.showModal();
+}
+function drApply(d,old,v,msg,ok){
+  if(!canEdit())return;
+  var f=d.file||{},p=d.payload||{};
+  var o,ref;
+  try{ref=parseLink(('대화 '+(f.date||'')+' · '+(f.name||'')).slice(0,80),f.link||'',f.date||todayISO())}catch(e){ref=null}
+  if(old){
+    o={id:old.id,title:old.title};
+    if(v.nextAction)o.nextAction=v.nextAction;
+    if(v.nextDue)o.nextDue=v.nextDue;
+    if(p.queue&&p.queue.length){
+      var qb=clone(old.queue||[]),seen={};
+      qb.forEach(function(q){seen[normT(q.t)]=1});
+      p.queue.forEach(function(q){if(seen[normT(q.t)])return;var x={t:q.t};if(q.due)x.due=q.due;qb.push(x)});
+      o.queue=qb;
+    }
+  }else{
+    if(!v.persona){msg.textContent='페르소나를 골라 주세요';return}
+    if(!v.title){msg.textContent='제목을 입력해 주세요';return}
+    o={persona:v.persona,title:v.title,status:p.status,cadence:p.cadence,lastTouched:f.date&&validDate(f.date)?f.date:todayISO(),
+       nextAction:v.nextAction,nextDue:v.nextDue,sensitive:v.sensitive,
+       queue:(p.queue||[]).map(function(q){var x={t:q.t};if(q.due)x.due=q.due;return x})};
+  }
+  var res=parseJSONCards(JSON.stringify([o]));
+  if(res.errs.length){msg.textContent=res.errs.join('\n');return}
+  if(old){
+    var patch=res.ups.length?res.ups[0].patch:{};
+    if(ref){
+      var has=(old.refs||[]).some(function(r){return r.t===ref.t});
+      if(!has)patch.refs=clone(old.refs||[]).concat([ref]);
+    }
+    if(!Object.keys(patch).length){msg.textContent='바뀌는 내용이 없어요. 거절하거나 나중에를 눌러 주세요';return}
+    enqueue({t:'update',id:old.id,patch:patch,msg:'대화 반영 수정: '+old.id,
+      log:{ts:utc(),id:old.id,kind:'edit',note:'대화 반영 ('+(f.name||'')+')',statusFrom:old.status,statusTo:old.status}},0);
+  }else{
+    var c=res.adds[0];if(!c){msg.textContent='추가할 내용을 만들지 못했어요';return}
+    if(ref)c.refs.push(ref);
+    enqueue({t:'add',project:{persona:c.persona,title:c.title,status:c.status,cadence:c.cadence,lastTouched:c.lastTouched,nextAction:c.nextAction,nextDue:c.nextDue,sensitive:c.sensitive,refs:c.refs,queue:c.queue},msg:'대화 반영 추가: '+c.title,
+      log:{ts:utc(),id:'',kind:'add',note:c.title+' (대화 반영)',statusFrom:'',statusTo:c.status}},0);
+  }
+  drCall('draftApprove',{id:d.id}).then(function(){ok()}).catch(function(){showToast('프로젝트에는 반영했지만 대기함 정리에 실패했어요. 새로고침하면 같은 초안이 다시 보일 수 있어요',null,5000);ok()});
+}
 
 /* ---------- 시작 ---------- */
 function boot(){
